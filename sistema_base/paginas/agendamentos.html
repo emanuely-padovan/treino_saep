@@ -1,0 +1,156 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema - Agendamentos</title>
+</head>
+<body>
+
+    <h1>Agendamentos</h1>
+
+    <p><a href="/principal">Voltar</a></p>
+
+    <!-- ===================================
+         LISTAGEM
+         EDITE: informações exibidas
+    ==================================== -->
+
+    <table border="1">
+        <tr>
+            <th>Cliente</th>
+            <th>Serviço</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+
+        {{#agendamentos}}
+        <tr>
+            <td>{{cliente_nome}}</td>
+            <td>{{servico_nome}}</td>
+            <td>{{data_br}}</td>
+            <td>{{status}}</td>
+
+            <td>
+                <a href="/agendamentos?editar={{id}}">
+                    Editar
+                </a>
+
+                <form method="POST" action="/agendamentos/{{id}}">
+                    <input
+                        type="hidden"
+                        name="_method"
+                        value="DELETE"
+                    />
+                    <button>Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {{/agendamentos}}
+    </table>
+
+
+    <!-- ===================================
+         CADASTRO / EDIÇÃO
+         ATENÇÃO: relacionamentos
+    ==================================== -->
+
+    <h2>
+        {{#editando}}Editar{{/editando}}
+        {{^editando}}Cadastrar{{/editando}}
+        agendamento
+    </h2>
+
+    <form method="POST" action="{{acao}}">
+
+        {{#editando}}
+        <input
+            type="hidden"
+            name="_method"
+            value="PUT"
+        />
+        {{/editando}}
+
+        <!-- EDITE: primeira entidade relacionada -->
+
+        <label>Cliente:</label>
+
+        <select name="cliente_id" required>
+            <option value="">Selecione o cliente...</option>
+
+            {{#clientes}}
+            <option value="{{id}}" {{selecionado}}>
+                {{nome}}
+            </option>
+            {{/clientes}}
+        </select>
+
+
+        <!-- EDITE: segunda entidade relacionada -->
+
+        <label>Serviço:</label>
+
+        <select name="servico_id" required>
+            <option value="">Selecione o serviço...</option>
+
+            {{#servicos}}
+            <option value="{{id}}" {{selecionado}}>
+                {{nome}}
+            </option>
+            {{/servicos}}
+        </select>
+
+
+        <!-- DATA E HORÁRIO -->
+
+        <label>Data do agendamento:</label>
+
+        <input
+            type="datetime-local"
+            name="data_agendamento"
+            value="{{form.data_input}}"
+            required
+        />
+
+
+        <!-- STATUS -->
+
+        <label>Status:</label>
+
+        <select name="status" required>
+            <option value="Pendente"
+                {{#form.status}}
+                {{#form.statusPendente}}selected{{/form.statusPendente}}
+                {{/form.status}}>
+                Pendente
+            </option>
+
+            <option value="Confirmado"
+                {{#form.statusConfirmado}}selected{{/form.statusConfirmado}}>
+                Confirmado
+            </option>
+
+            <option value="Concluído"
+                {{#form.statusConcluido}}selected{{/form.statusConcluido}}>
+                Concluído
+            </option>
+
+            <option value="Cancelado"
+                {{#form.statusCancelado}}selected{{/form.statusCancelado}}>
+                Cancelado
+            </option>
+        </select>
+
+        <button>
+            {{#editando}}Salvar{{/editando}}
+            {{^editando}}Cadastrar{{/editando}}
+        </button>
+
+    </form>
+
+    <p>{{erro}}</p>
+
+</body>
+</html>
